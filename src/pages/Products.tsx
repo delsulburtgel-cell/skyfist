@@ -17,11 +17,13 @@ interface DBProduct {
   price: number;
   price_formatted: string;
   category_id: string | null;
+  brand_id: string | null;
   description: string | null;
   image_url: string | null;
   specs: string[] | null;
   is_active: boolean;
   categories?: { id: string; name: string; slug: string } | null;
+  brands?: { id: string; name: string; image_url: string | null } | null;
 }
 
 interface Category {
@@ -40,7 +42,10 @@ const Products = () => {
   useEffect(() => {
     const fetchData = async () => {
       const [prodRes, catRes] = await Promise.all([
-        supabase.from("products").select("*, categories(id, name, slug)").eq("is_active", true),
+        supabase
+          .from("products")
+          .select("*, categories(id, name, slug), brands(id, name, image_url)")
+          .eq("is_active", true),
         supabase.from("categories").select("*"),
       ]);
       if (prodRes.data) setProducts(prodRes.data);
@@ -50,8 +55,10 @@ const Products = () => {
   }, []);
 
   const filtered = products.filter((p) => {
-    const matchCategory = selectedCategory === "all" || p.category_id === selectedCategory;
-    const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    const matchCategory =
+      selectedCategory === "all" || p.category_id === selectedCategory;
+    const matchSearch =
+      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (p.description ?? "").toLowerCase().includes(searchQuery.toLowerCase());
     return matchCategory && matchSearch;
   });
@@ -88,13 +95,13 @@ const Products = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.7 }}
-              className="text-center"
-            >
+              className="text-center">
               <h1 className="font-display text-3xl md:text-5xl font-bold text-gradient-gold mb-4">
                 Бүтээгдэхүүн
               </h1>
               <p className="text-muted-foreground max-w-lg mx-auto px-6">
-                Технологийн шилдэг бүтээгдэхүүнүүдийг хамгийн сайн үнээр санал болгож байна
+                Технологийн шилдэг бүтээгдэхүүнүүдийг хамгийн сайн үнээр санал
+                болгож байна
               </p>
             </motion.div>
           </div>
@@ -109,8 +116,7 @@ const Products = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="flex flex-col md:flex-row gap-4 mb-12"
-        >
+          className="flex flex-col md:flex-row gap-4 mb-12">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
             <Input
@@ -127,8 +133,7 @@ const Products = () => {
                 selectedCategory === "all"
                   ? "bg-primary text-primary-foreground"
                   : "bg-secondary text-muted-foreground hover:text-foreground"
-              }`}
-            >
+              }`}>
               Бүгд
             </button>
             {categories.map((c) => (
@@ -139,8 +144,7 @@ const Products = () => {
                   selectedCategory === c.id
                     ? "bg-primary text-primary-foreground"
                     : "bg-secondary text-muted-foreground hover:text-foreground"
-                }`}
-              >
+                }`}>
                 {c.name}
               </button>
             ))}
@@ -157,8 +161,7 @@ const Products = () => {
               whileInView="visible"
               viewport={{ once: true, margin: "-50px" }}
               variants={fadeUp}
-              className="glass-card rounded-xl overflow-hidden group hover:border-primary/30 transition-all duration-500 hover:glow-gold"
-            >
+              className="glass-card rounded-xl overflow-hidden group hover:border-primary/30 transition-all duration-500 hover:glow-gold">
               <Link to={`/product/${product.id}`}>
                 <div className="aspect-square overflow-hidden relative">
                   <img
@@ -167,6 +170,15 @@ const Products = () => {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-card/80 to-transparent" />
+                  {product.brands?.image_url && (
+                    <div className="absolute top-3 left-3 w-8 h-8 bg-white/90 rounded-full p-1 shadow-md">
+                      <img
+                        src={product.brands.image_url}
+                        alt={product.brands.name}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  )}
                 </div>
               </Link>
               <div className="p-6">
@@ -185,7 +197,10 @@ const Products = () => {
                   <p className="font-display text-xl font-bold text-primary">
                     {product.price_formatted}
                   </p>
-                  <Button variant="hero" size="sm" onClick={() => handleAddToCart(product)}>
+                  <Button
+                    variant="hero"
+                    size="sm"
+                    onClick={() => handleAddToCart(product)}>
                     <ShoppingCart className="w-4 h-4 mr-1" />
                     Нэмэх
                   </Button>
@@ -197,7 +212,9 @@ const Products = () => {
 
         {filtered.length === 0 && (
           <div className="text-center py-20">
-            <p className="text-muted-foreground font-display">Бүтээгдэхүүн олдсонгүй</p>
+            <p className="text-muted-foreground font-display">
+              Бүтээгдэхүүн олдсонгүй
+            </p>
           </div>
         )}
       </section>

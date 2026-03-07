@@ -14,10 +14,12 @@ interface DBProduct {
   price: number;
   price_formatted: string;
   category_id: string | null;
+  brand_id: string | null;
   description: string | null;
   image_url: string | null;
   specs: string[] | null;
   categories?: { name: string } | null;
+  brands?: { name: string; image_url: string | null } | null;
 }
 
 const ProductDetail = () => {
@@ -31,7 +33,7 @@ const ProductDetail = () => {
     const fetch = async () => {
       const { data } = await supabase
         .from("products")
-        .select("*, categories(name)")
+        .select("*, categories(name), brands(name, image_url)")
         .eq("id", id!)
         .maybeSingle();
       setProduct(data);
@@ -76,31 +78,55 @@ const ProductDetail = () => {
       <div className="container px-6 pt-28 pb-20">
         <Link
           to="/products"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-8 font-display"
-        >
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-8 font-display">
           <ArrowLeft className="w-4 h-4" />
           Бүтээгдэхүүн
         </Link>
+
+        {product.brands?.image_url && (
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-white rounded-full p-2 shadow-md">
+              <img
+                src={product.brands.image_url}
+                alt={product.brands.name}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Брэнд</p>
+              <p className="font-display font-semibold text-foreground">
+                {product.brands.name}
+              </p>
+            </div>
+          </div>
+        )}
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="glass-card rounded-2xl overflow-hidden"
-          >
+            className="glass-card rounded-2xl overflow-hidden relative">
             <img
               src={product.image_url ?? ""}
               alt={product.name}
               className="w-full aspect-square object-cover"
             />
+            {product.brands?.image_url && (
+              <div className="absolute top-4 left-4 w-10 h-10 bg-white/90 rounded-full p-1 shadow-md">
+                <img
+                  src={product.brands.image_url}
+                  alt={product.brands.name}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            )}
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
+            transition={{ duration: 0.6, delay: 0.2 }}>
             <p className="text-xs font-display tracking-[0.2em] text-primary/60 mb-3 uppercase">
               {product.categories?.name ?? ""}
             </p>
@@ -121,7 +147,9 @@ const ProductDetail = () => {
                 </h3>
                 <ul className="space-y-2">
                   {product.specs.map((spec, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
+                    <li
+                      key={i}
+                      className="flex items-center gap-3 text-sm text-muted-foreground">
                       <Check className="w-4 h-4 text-primary flex-shrink-0" />
                       {spec}
                     </li>
@@ -131,7 +159,11 @@ const ProductDetail = () => {
             )}
 
             <div className="flex gap-4">
-              <Button variant="hero" size="lg" onClick={handleAdd} className="flex-1">
+              <Button
+                variant="hero"
+                size="lg"
+                onClick={handleAdd}
+                className="flex-1">
                 <ShoppingCart className="w-5 h-5 mr-2" />
                 {added ? "Нэмэгдлээ ✓" : "Сагсанд нэмэх"}
               </Button>
