@@ -9,19 +9,24 @@ create table if not exists public.brands (
 );
 
 -- add brand_id to products table
-alter table public.products
-  add column if not exists brand_id uuid references public.brands(id);
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'products') THEN
+    ALTER TABLE public.products
+      ADD COLUMN IF NOT EXISTS brand_id uuid REFERENCES public.brands(id);
 
--- create index for performance
-create index if not exists idx_products_brand_id on public.products(brand_id);
+    -- create index for performance
+    CREATE INDEX IF NOT EXISTS idx_products_brand_id ON public.products(brand_id);
+  END IF;
+END $$;
 
 -- insert some sample brands
 insert into public.brands (id, name)
 values
-  ('brand-dell', 'DELL'),
-  ('brand-lenovo', 'LENOVO'),
-  ('brand-xerox', 'XEROX'),
-  ('brand-hikvision', 'HIKVISION'),
-  ('brand-cisco', 'CISCO'),
-  ('brand-hp', 'HP')
+  ('00000000-0000-0000-0000-000000000001', 'DELL'),
+  ('00000000-0000-0000-0000-000000000002', 'LENOVO'),
+  ('00000000-0000-0000-0000-000000000003', 'XEROX'),
+  ('00000000-0000-0000-0000-000000000004', 'HIKVISION'),
+  ('00000000-0000-0000-0000-000000000005', 'CISCO'),
+  ('00000000-0000-0000-0000-000000000006', 'HP')
 on conflict (id) do nothing;
