@@ -10,30 +10,32 @@ const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, signingIn } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
-    const { error } = await signIn(email, password);
-    if (error) {
-      setError("Нэвтрэх нэр эсвэл нууц үг буруу байна");
-    } else {
-      navigate("/admin");
-    }
-    setLoading(false);
-  };
 
+    try {
+      const { data, error } = await signIn(email, password);
+      console.log("signIn returned:", { data, error });
+
+      if (error) {
+        setError("Нэвтрэх нэр эсвэл нууц үг буруу байна");
+      } else {
+        navigate("/admin");
+      }
+    } catch (err) {
+      console.error("handleSubmit error:", err);
+    }
+  };
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass-card rounded-2xl p-8 w-full max-w-md"
-      >
+        className="glass-card rounded-2xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="font-display text-2xl font-bold text-gradient-gold mb-2">
             SF TECHNOLOGY
@@ -69,8 +71,8 @@ const AdminLogin = () => {
             <p className="text-sm text-destructive text-center">{error}</p>
           )}
 
-          <Button variant="hero" className="w-full" disabled={loading}>
-            {loading ? "Нэвтэрч байна..." : "Нэвтрэх"}
+          <Button variant="hero" className="w-full" disabled={signingIn}>
+            {signingIn ? "Нэвтэрч байна..." : "Нэвтрэх"}
           </Button>
         </form>
       </motion.div>
