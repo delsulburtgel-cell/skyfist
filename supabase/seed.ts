@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
-import type { Database } from "../src/integrations/supabase/types";import { faqs } from '../src/data/faqs';
+import type { Database } from "../src/integrations/supabase/types";
+import { faqs } from "../src/data/faqs";
 // Service role key is required for admin operations such as creating users.
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -41,26 +42,6 @@ async function run() {
   await supabase.from("categories").upsert(categories, { onConflict: "id" });
 
   // products
-  const products = [
-    {
-      id: "prod-1",
-      category_id: "cat-fiber",
-      name: "100 Mbps Plan",
-      price: 49.99,
-      price_formatted: "$49.99",
-      is_active: true,
-    },
-    {
-      id: "prod-2",
-      category_id: "cat-fiber",
-      name: "1 Gbps Plan",
-      price: 99.99,
-      price_formatted: "$99.99",
-      is_active: true,
-    },
-  ];
-
-  await supabase.from("products").upsert(products, { onConflict: "id" });
 
   // questions (imported from shared static data)
   const questions = faqs.map((item) => ({ question: item.q, answer: item.a }));

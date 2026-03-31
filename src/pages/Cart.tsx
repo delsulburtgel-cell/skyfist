@@ -2,15 +2,42 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
-import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag, User, Phone, Mail, MapPin } from "lucide-react";
+import { QPayCheckoutDialog } from "@/components/QPayCheckoutDialog";
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const Cart = () => {
   const { items, removeFromCart, updateQuantity, clearCart, totalPrice } = useCart();
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [customerInfo, setCustomerInfo] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    address: "",
+  });
 
   const formatPrice = (price: number) =>
     price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "₮";
+
+  const handleCheckout = () => {
+    if (!customerInfo.name || !customerInfo.phone || !customerInfo.address) {
+      alert("Нэр, утасны дугаар болон хаягийг заавал бөглөнө үү!");
+      return;
+    }
+    setCheckoutOpen(true);
+  };
+
+  const handleCheckoutSuccess = () => {
+    console.log("Order completed successfully!");
+    // Here you could save the order to database
+    clearCart();
+    setCheckoutOpen(false);
+    setCustomerInfo({ name: "", phone: "", email: "", address: "" });
+  };
 
   if (items.length === 0) {
     return (
@@ -124,8 +151,74 @@ const Cart = () => {
                 {formatPrice(totalPrice)}
               </span>
             </div>
-            <Button variant="hero" size="lg" className="w-full mb-3">
-              Захиалга өгөх
+
+            {/* Customer Information Form */}
+            <div className="space-y-4 mb-6">
+              <h4 className="font-display font-medium text-foreground flex items-center gap-2">
+                <User className="w-4 h-4" />
+                Хэрэглэгчийн мэдээлэл
+              </h4>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1 block">Нэр *</label>
+                  <Input
+                    placeholder="Таны нэр"
+                    value={customerInfo.name}
+                    onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
+                    className="text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1 block flex items-center gap-1">
+                    <Phone className="w-3 h-3" />
+                    Утасны дугаар *
+                  </label>
+                  <Input
+                    placeholder="70000000"
+                    value={customerInfo.phone}
+                    onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
+                    className="text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1 block flex items-center gap-1">
+                    <Mail className="w-3 h-3" />
+                    И-мэйл
+                  </label>
+                  <Input
+                    type="email"
+                    placeholder="example@email.com"
+                    value={customerInfo.email}
+                    onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
+                    className="text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs text-muted-foreground mb-1 block flex items-center gap-1">
+                    <MapPin className="w-3 h-3" />
+                    Хаяг *
+                  </label>
+                  <Textarea
+                    placeholder="Хүргүүлэх хаяг"
+                    value={customerInfo.address}
+                    onChange={(e) => setCustomerInfo({ ...customerInfo, address: e.target.value })}
+                    className="text-sm min-h-[60px]"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <Button
+              variant="hero"
+              size="lg"
+              className="w-full mb-3"
+              onClick={handleCheckout}
+            >
+              QPay-ээр төлөх
             </Button>
             <Button
               variant="ghost"
@@ -138,6 +231,16 @@ const Cart = () => {
           </div>
         </div>
       </div>
+
+      {/* QPay Checkout Dialog */}
+      <QPayCheckoutDialog
+        open={checkoutOpen}
+        onOpenChange={setCheckoutOpen}
+        cartTotal={totalPrice}
+        onCheckoutSuccess={handleCheckoutSuccess}
+        customerInfo={customerInfo}
+      />
+
       <Footer />
     </div>
   );

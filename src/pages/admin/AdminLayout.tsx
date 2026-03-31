@@ -23,6 +23,7 @@ const navItems = [
 
 const AdminLayout = () => {
   const { user, isAdmin, loading, signOut } = useAuth();
+  const location = useLocation();
 
   if (!user) return <Navigate to="/admin/login" replace />;
   if (!isAdmin) {
