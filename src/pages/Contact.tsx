@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import contactBg from "@/assets/services-bg.jpg";
 import { fadeUp } from "@/lib/animations";
 
@@ -42,13 +43,35 @@ const Contact = () => {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
+    const { error } = await supabase.from("requests").insert({
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      message: form.message,
+    });
+
+    if (error) {
+      toast({
+        title: "Мессеж илгээхэд алдаа гарлаа",
+        description: error.message,
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     toast({
       title: "Мессеж амжилттай илгээгдлээ!",
       description: "Бид тантай удахгүй холбогдох болно.",
     });
+
     setForm({ name: "", email: "", phone: "", message: "" });
+    setIsSubmitting(false);
   };
 
   return (
@@ -203,9 +226,14 @@ const Contact = () => {
                   className="bg-secondary/50 border-border/50 focus:border-primary resize-none"
                 />
               </div>
-              <Button variant="hero" size="lg" className="w-full" type="submit">
+              <Button
+                disabled={isSubmitting}
+                variant="hero"
+                size="lg"
+                className="w-full"
+                type="submit">
                 <Send className="w-4 h-4 mr-2" />
-                Илгээх
+                {isSubmitting ? "Илгээж байна..." : "Илгээх"}
               </Button>
             </form>
           </motion.div>

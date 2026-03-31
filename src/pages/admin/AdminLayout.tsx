@@ -9,6 +9,7 @@ import {
   Tag,
   LogOut,
   Building,
+  Mail,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -19,6 +20,7 @@ const navItems = [
   { label: "Брэнд", href: "/admin/brands", icon: Building },
   { label: "Захиалга", href: "/admin/orders", icon: ShoppingCart },
   { label: "Гишүүд", href: "/admin/members", icon: Users },
+  { label: "Холбооны хүсэлт", href: "/admin/requests", icon: Mail },
 ];
 
 const AdminLayout = () => {
