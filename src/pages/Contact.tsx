@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+
 import { supabase } from "@/integrations/supabase/client";
 import contactBg from "@/assets/services-bg.jpg";
 import { fadeUp } from "@/lib/animations";
@@ -15,17 +16,17 @@ const contactInfo = [
   {
     icon: MapPin,
     title: "Хаяг",
-    detail: "Улаанбаатар хот, Баянгол дүүрэг",
+    detail: "Улаанбаатар хот, Чингэлтэй дүүрэг 5-р хороо MN tower 1205 тоот",
   },
   {
     icon: Phone,
     title: "Утас",
-    detail: "+976 7700-0000",
+    detail: "+976 78090000",
   },
   {
     icon: Mail,
     title: "И-мэйл",
-    detail: "info@sftechnology.mn",
+    detail: "work@skyfist.mn",
   },
   {
     icon: Clock,
