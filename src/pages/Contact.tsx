@@ -147,15 +147,27 @@ const Contact = () => {
               ))}
             </div>
 
-            {/* Map placeholder */}
+            {/* Free map embed with pin (OpenStreetMap) */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="glass-card rounded-xl h-48 flex items-center justify-center">
-              <div className="text-center">
-                <MapPin className="w-8 h-8 text-primary/40 mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">Газрын зураг</p>
+              className="glass-card rounded-xl overflow-hidden">
+              <div className="relative pb-[56.25%]">
+                <iframe
+                  title="SF Technology Location"
+                  className="absolute inset-0 w-full h-full"
+                  src="https://www.openstreetmap.org/export/embed.html?bbox=106.8960%2C47.9195%2C106.9070%2C47.9245&amp;layer=mapnik&amp;marker=47.9223500%2C106.9052000"
+                  style={{ border: 0 }}
+                  loading="lazy"></iframe>
+              </div>
+              <div className="p-4">
+                <h3 className="font-display text-sm font-semibold text-foreground mb-1">
+                  Байршил:
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  J.Sambuu St, Chingeltei District 5th horoo, Ulaanbaatar 15141
+                </p>
               </div>
             </motion.div>
           </div>
