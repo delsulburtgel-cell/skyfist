@@ -27,8 +27,7 @@ const ProjectsSection = () => {
         <motion.p
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
-          className="text-xs font-display tracking-[0.3em] text-primary mb-12 uppercase text-center"
-        >
+          className="text-xs font-display tracking-[0.3em] text-primary mb-12 uppercase text-center">
           Хамтын ажиллагаа
         </motion.p>
 
@@ -41,13 +40,14 @@ const ProjectsSection = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.15, duration: 0.6 }}
-              className="glass-card rounded-xl p-8 group hover:border-primary/30 transition-all duration-500"
-            >
+              className="glass-card rounded-xl p-8 group hover:border-primary/30 transition-all duration-500">
               <MapPin className="w-5 h-5 text-primary mb-4" />
               <h3 className="font-display text-sm font-semibold tracking-wider text-foreground mb-3">
                 {p.title}
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed text-justify ">
+                {p.desc}
+              </p>
             </motion.div>
           ))}
         </div>
