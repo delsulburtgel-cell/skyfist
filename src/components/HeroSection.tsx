@@ -35,7 +35,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="text-4xl sm:text-5xl md:text-7xl font-display font-normal hero-heading leading-tight mb-8">
+          className="text-4xl sm:text-5xl md:text-7xl font-display hero-heading leading-tight mb-8">
           <span className="text-gradient">Бид технологийн цогц</span>
           <br />
           <span className="text-foreground">үйлчилгээг үзүүлнэ</span>
