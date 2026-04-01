@@ -31,7 +31,9 @@ export function QPayPaymentStatus({
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/qpay/check/${invoiceId}`);
+      const response = await fetch(
+        `https://sf-qpay.vercel.app/api/qpay/check/${invoiceId}`,
+      );
       if (!response.ok) {
         throw new Error("Failed to check payment status");
       }
@@ -62,7 +64,7 @@ export function QPayPaymentStatus({
         return (
           <div className="flex items-center gap-2 text-green-600">
             <Check className="w-5 h-5" />
-            <span>Payment Successful</span>
+            <span>Төлбөр амжилттай</span>
           </div>
         );
       case "FAILED":
@@ -70,7 +72,7 @@ export function QPayPaymentStatus({
         return (
           <div className="flex items-center gap-2 text-red-600">
             <X className="w-5 h-5" />
-            <span>Payment Failed</span>
+            <span>Төлбөр амжилтгүй</span>
           </div>
         );
       case "PENDING":
@@ -78,21 +80,23 @@ export function QPayPaymentStatus({
         return (
           <div className="flex items-center gap-2 text-yellow-600">
             <Loader2 className="w-5 h-5 animate-spin" />
-            <span>Payment Processing</span>
+            <span>Төлбөр боловсруулах явцад</span>
           </div>
         );
       default:
         return (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="w-5 h-5 animate-spin" />
-            <span>Checking status...</span>
+            <span>Төлбөрийн статусыг шалгаж байна...</span>
           </div>
         );
     }
   };
 
   return (
-    <div className="glass-card rounded-lg p-4 space-y-3">
+    <div
+      className="glass-card rounded-lg p-4 space-y-3"
+      style={{ fontFamily: "Eurostile, sans-serif", fontWeight: 700 }}>
       <div>{getStatusDisplay()}</div>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <Button
@@ -101,14 +105,7 @@ export function QPayPaymentStatus({
         size="sm"
         disabled={loading}
         className="w-full">
-        {loading ? (
-          <>
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            Checking...
-          </>
-        ) : (
-          "Check Status"
-        )}
+        Статус шалгах
       </Button>
     </div>
   );

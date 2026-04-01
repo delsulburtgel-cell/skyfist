@@ -4,14 +4,25 @@ import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag, User, Phone, Mail, MapPin } from "lucide-react";
+import {
+  Trash2,
+  Plus,
+  Minus,
+  ArrowLeft,
+  ShoppingBag,
+  User,
+  Phone,
+  Mail,
+  MapPin,
+} from "lucide-react";
 import { QPayCheckoutDialog } from "@/components/QPayCheckoutDialog";
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const Cart = () => {
-  const { items, removeFromCart, updateQuantity, clearCart, totalPrice } = useCart();
+  const { items, removeFromCart, updateQuantity, clearCart, totalPrice } =
+    useCart();
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({
     name: "",
@@ -48,7 +59,9 @@ const Cart = () => {
           <h1 className="font-display text-2xl font-bold text-foreground mb-3">
             Сагс хоосон байна
           </h1>
-          <p className="text-muted-foreground mb-8">Бүтээгдэхүүн нэмж эхлээрэй</p>
+          <p className="text-muted-foreground mb-8">
+            Бүтээгдэхүүн нэмж эхлээрэй
+          </p>
           <Button variant="hero" asChild>
             <Link to="/#products">Дэлгүүр үзэх</Link>
           </Button>
@@ -64,8 +77,7 @@ const Cart = () => {
       <div className="container px-6 pt-28 pb-20">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-8 font-display"
-        >
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-8 font-display">
           <ArrowLeft className="w-4 h-4" />
           Нүүр хуудас
         </Link>
@@ -82,8 +94,7 @@ const Cart = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="glass-card rounded-xl p-4 flex gap-4 items-center"
-              >
+                className="glass-card rounded-xl p-4 flex gap-4 items-center">
                 <img
                   src={item.product.image}
                   alt={item.product.name}
@@ -93,25 +104,29 @@ const Cart = () => {
                   <h3 className="font-display text-sm font-semibold text-foreground truncate">
                     {item.product.name}
                   </h3>
-                  <p className="text-xs text-muted-foreground mt-1">{item.product.category}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {item.product.category}
+                  </p>
                   <p className="font-display font-bold text-primary mt-1">
                     {item.product.priceFormatted}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                    className="w-8 h-8 rounded-md bg-secondary flex items-center justify-center text-foreground hover:bg-secondary/80 transition-colors"
-                  >
+                    onClick={() =>
+                      updateQuantity(item.product.id, item.quantity - 1)
+                    }
+                    className="w-8 h-8 rounded-md bg-secondary flex items-center justify-center text-foreground hover:bg-secondary/80 transition-colors">
                     <Minus className="w-3 h-3" />
                   </button>
                   <span className="font-display font-semibold text-foreground w-8 text-center">
                     {item.quantity}
                   </span>
                   <button
-                    onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                    className="w-8 h-8 rounded-md bg-secondary flex items-center justify-center text-foreground hover:bg-secondary/80 transition-colors"
-                  >
+                    onClick={() =>
+                      updateQuantity(item.product.id, item.quantity + 1)
+                    }
+                    className="w-8 h-8 rounded-md bg-secondary flex items-center justify-center text-foreground hover:bg-secondary/80 transition-colors">
                     <Plus className="w-3 h-3" />
                   </button>
                 </div>
@@ -122,8 +137,7 @@ const Cart = () => {
                 </div>
                 <button
                   onClick={() => removeFromCart(item.product.id)}
-                  className="text-muted-foreground hover:text-destructive transition-colors p-2"
-                >
+                  className="text-muted-foreground hover:text-destructive transition-colors p-2">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </motion.div>
@@ -131,10 +145,14 @@ const Cart = () => {
           </div>
 
           <div className="glass-card rounded-xl p-6 h-fit sticky top-24">
-            <h3 className="font-display font-semibold text-foreground mb-6">Захиалгын дүн</h3>
+            <h3 className="font-display font-semibold text-foreground mb-6">
+              Захиалгын дүн
+            </h3>
             <div className="space-y-3 mb-6">
               {items.map((item) => (
-                <div key={item.product.id} className="flex justify-between text-sm">
+                <div
+                  key={item.product.id}
+                  className="flex justify-between text-sm">
                   <span className="text-muted-foreground truncate mr-2">
                     {item.product.name} x{item.quantity}
                   </span>
@@ -146,7 +164,9 @@ const Cart = () => {
             </div>
             <div className="line-gradient mb-4" />
             <div className="flex justify-between mb-6">
-              <span className="font-display font-semibold text-foreground">Нийт</span>
+              <span className="font-display font-semibold text-foreground">
+                Нийт
+              </span>
               <span className="font-display text-xl font-bold text-primary">
                 {formatPrice(totalPrice)}
               </span>
@@ -161,11 +181,15 @@ const Cart = () => {
 
               <div className="space-y-3">
                 <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">Нэр *</label>
+                  <label className="text-xs text-muted-foreground mb-1 block">
+                    Нэр *
+                  </label>
                   <Input
                     placeholder="Таны нэр"
                     value={customerInfo.name}
-                    onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
+                    onChange={(e) =>
+                      setCustomerInfo({ ...customerInfo, name: e.target.value })
+                    }
                     className="text-sm"
                   />
                 </div>
@@ -178,7 +202,12 @@ const Cart = () => {
                   <Input
                     placeholder="70000000"
                     value={customerInfo.phone}
-                    onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
+                    onChange={(e) =>
+                      setCustomerInfo({
+                        ...customerInfo,
+                        phone: e.target.value,
+                      })
+                    }
                     className="text-sm"
                   />
                 </div>
@@ -192,7 +221,12 @@ const Cart = () => {
                     type="email"
                     placeholder="example@email.com"
                     value={customerInfo.email}
-                    onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
+                    onChange={(e) =>
+                      setCustomerInfo({
+                        ...customerInfo,
+                        email: e.target.value,
+                      })
+                    }
                     className="text-sm"
                   />
                 </div>
@@ -205,7 +239,12 @@ const Cart = () => {
                   <Textarea
                     placeholder="Хүргүүлэх хаяг"
                     value={customerInfo.address}
-                    onChange={(e) => setCustomerInfo({ ...customerInfo, address: e.target.value })}
+                    onChange={(e) =>
+                      setCustomerInfo({
+                        ...customerInfo,
+                        address: e.target.value,
+                      })
+                    }
                     className="text-sm min-h-[60px]"
                   />
                 </div>
@@ -216,16 +255,14 @@ const Cart = () => {
               variant="hero"
               size="lg"
               className="w-full mb-3"
-              onClick={handleCheckout}
-            >
+              onClick={handleCheckout}>
               QPay-ээр төлөх
             </Button>
             <Button
               variant="ghost"
               size="sm"
               onClick={clearCart}
-              className="w-full text-muted-foreground"
-            >
+              className="w-full text-muted-foreground">
               Сагс хоослох
             </Button>
           </div>
@@ -237,6 +274,7 @@ const Cart = () => {
         open={checkoutOpen}
         onOpenChange={setCheckoutOpen}
         cartTotal={totalPrice}
+        items={items}
         onCheckoutSuccess={handleCheckoutSuccess}
         customerInfo={customerInfo}
       />

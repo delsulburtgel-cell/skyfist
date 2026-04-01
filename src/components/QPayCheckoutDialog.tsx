@@ -16,6 +16,7 @@ interface CheckoutDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   cartTotal: number;
+  items: Array<{ product: any; quantity: number }>;
   onCheckoutSuccess?: () => void;
   customerInfo?: {
     name: string;
@@ -25,25 +26,33 @@ interface CheckoutDialogProps {
   };
 }
 
+const smallFontStyle: React.CSSProperties = {
+  fontFamily: "Eurostile, sans-serif",
+  fontWeight: 700,
+};
+
+const bigFontStyle: React.CSSProperties = {
+  fontFamily: "Bank-Gothic, sans-serif",
+};
+
 export function QPayCheckoutDialog({
   open,
   onOpenChange,
   cartTotal,
+  items,
   onCheckoutSuccess,
   customerInfo: initialCustomerInfo,
 }: CheckoutDialogProps) {
-  const [step, setStep] = useState<"info" | "payment" | "status">(
-    initialCustomerInfo?.name && initialCustomerInfo?.phone
-      ? "payment"
-      : "info",
-  );
+  const [step, setStep] = useState<"payment" | "status">("payment");
   const [customerInfo, setCustomerInfo] = useState({
     name: initialCustomerInfo?.name || "",
     phone: initialCustomerInfo?.phone || "",
     email: initialCustomerInfo?.email || "",
   });
   const [orderId, setOrderId] = useState<string>("");
-  const { toast } = useToast();
+  const [orderSaved, setOrderSaved] = useState(false);
+  const [qrImage, setQrImage] = useState<string | null>(null);
+  const [qpayUrl, setQpayUrl] = useState<string | null>(null);
 
   // Auto-generate order ID when customer info is provided
   useEffect(() => {
@@ -53,109 +62,35 @@ export function QPayCheckoutDialog({
     }
   }, [initialCustomerInfo, orderId]);
 
-  const handleSubmitInfo = async () => {
-    if (!customerInfo.name || !customerInfo.phone) {
-      toast({
-        title: "Error",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Generate order ID (in real app, this comes from backend)
-    const newOrderId = `ORD-${Date.now()}`;
-    setOrderId(newOrderId);
-
-    // Here you would typically create an order in your database
-    // await supabase.from("orders").insert({...})
-
-    setStep("payment");
-  };
-
-  const handlePaymentSuccess = () => {
+  const handleInvoiceCreated = (
+    qr?: string | null,
+    url?: string | null,
+    invoiceId?: string,
+  ) => {
+    if (qr) setQrImage(qr);
+    if (url) setQpayUrl(url);
+    if (invoiceId) setOrderId(invoiceId);
     setStep("status");
   };
 
   const handleClose = () => {
     // Reset state
-    setStep("info");
+    setStep("payment");
     setCustomerInfo({ name: "", phone: "", email: "" });
     setOrderId("");
+    setOrderSaved(false);
     onOpenChange(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px]" style={smallFontStyle}>
         <DialogHeader>
-          <DialogTitle>Checkout</DialogTitle>
-          <DialogDescription>
-            Complete your purchase securely with QPay
+          <DialogTitle style={bigFontStyle}>Төлбөр хийх</DialogTitle>
+          <DialogDescription style={smallFontStyle}>
+            QR кодыг уншуулж QPay-ээр төлбөр хийх
           </DialogDescription>
         </DialogHeader>
-
-        {step === "info" && (
-          <div className="space-y-4 py-4">
-            <div className="glass-card rounded-lg p-4 bg-primary/5">
-              <p className="text-sm">
-                Total:{" "}
-                <span className="font-bold">{cartTotal.toLocaleString()}₮</span>
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <div>
-                <label className="text-sm font-medium">Full Name *</label>
-                <Input
-                  placeholder="Your full name"
-                  value={customerInfo.name}
-                  onChange={(e) =>
-                    setCustomerInfo({ ...customerInfo, name: e.target.value })
-                  }
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">Phone Number *</label>
-                <Input
-                  placeholder="70000000"
-                  value={customerInfo.phone}
-                  onChange={(e) =>
-                    setCustomerInfo({ ...customerInfo, phone: e.target.value })
-                  }
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">Email</label>
-                <Input
-                  type="email"
-                  placeholder="your@email.com"
-                  value={customerInfo.email}
-                  onChange={(e) =>
-                    setCustomerInfo({ ...customerInfo, email: e.target.value })
-                  }
-                  className="mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-2 pt-4">
-              <Button
-                variant="outline"
-                onClick={() => handleClose()}
-                className="flex-1">
-                Cancel
-              </Button>
-              <Button onClick={handleSubmitInfo} className="flex-1">
-                Continue to Payment
-              </Button>
-            </div>
-          </div>
-        )}
 
         {step === "payment" && (
           <div className="py-4">
@@ -164,17 +99,113 @@ export function QPayCheckoutDialog({
               amount={cartTotal}
               customerName={customerInfo.name}
               customerPhone={customerInfo.phone}
-              onPaymentSuccess={handlePaymentSuccess}
+              items={items}
+              onInvoiceCreated={handleInvoiceCreated}
             />
           </div>
         )}
 
         {step === "status" && (
           <div className="space-y-4 py-4">
-            <QPayPaymentStatus invoiceId={orderId} autoCheck />
-            <Button onClick={handleClose} className="w-full">
-              Close
-            </Button>
+            {qrImage && (
+              <div className="text-center">
+                <img
+                  src={`data:image/png;base64,${qrImage}`}
+                  alt="QPay QR Code"
+                  className="mx-auto w-56 h-56"
+                />
+                <p
+                  className="text-xs text-muted-foreground mt-2"
+                  style={smallFontStyle}>
+                  QPay апп-д QR кодыг уншуулан төлбөр хийх
+                </p>
+              </div>
+            )}
+            {qpayUrl && (
+              <div className="text-center">
+                <a
+                  href={qpayUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center px-3 py-2 bg-primary text-white rounded-md">
+                  Open QPay payment page
+                </a>
+              </div>
+            )}
+
+            <QPayPaymentStatus
+              invoiceId={orderId}
+              autoCheck
+              checkInterval={3000}
+              onStatusChange={async (status) => {
+                if (
+                  (status === "PAID" || status === "SUCCESS") &&
+                  !orderSaved
+                ) {
+                  try {
+                    // Save order to database
+                    const orderData = {
+                      customer_name: customerInfo.name,
+                      customer_phone: customerInfo.phone,
+                      customer_email: customerInfo.email,
+                      items: items.map((item) => ({
+                        product_id: item.product.id,
+                        product_name: item.product.name,
+                        quantity: item.quantity,
+                        price: item.product.price,
+                      })),
+                      total_price: cartTotal,
+                      notes: null,
+                    };
+                    const response = await fetch(
+                      "https://sf-qpay.vercel.app/orders/create",
+                      {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(orderData),
+                      },
+                    );
+                    if (response.ok) {
+                      setOrderSaved(true);
+                      onCheckoutSuccess?.();
+                      toast({
+                        title: "Success",
+                        description: "Order saved successfully!",
+                      });
+                    } else {
+                      throw new Error("Failed to save order");
+                    }
+                  } catch (error) {
+                    console.error("Error saving order:", error);
+                    toast({
+                      title: "Error",
+                      description:
+                        "Failed to save order. Please contact support.",
+                      variant: "destructive",
+                    });
+                  }
+                }
+              }}
+            />
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  // Trigger manual check by calling the status component's check function
+                  // For now, just show a message
+                  toast({
+                    title: "Checking...",
+                    description:
+                      "Payment status is being checked automatically.",
+                  });
+                }}
+                className="flex-1">
+                Төлбөр Шалгах
+              </Button>
+              <Button onClick={handleClose} className="flex-1">
+                Болих
+              </Button>
+            </div>
           </div>
         )}
       </DialogContent>
