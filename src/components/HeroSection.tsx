@@ -27,8 +27,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-primary/80 text-sm font-medium tracking-[0.3em] uppercase mb-6"
-        >
+          className="text-primary/80 text-sm font-medium tracking-[0.3em] uppercase mb-6">
           SF Technology
         </motion.p>
 
@@ -36,8 +35,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="text-4xl sm:text-5xl md:text-7xl font-display font-bold leading-tight mb-8"
-        >
+          className="text-4xl sm:text-5xl md:text-7xl font-display font-normal hero-heading leading-tight mb-8">
           <span className="text-gradient">Бид технологийн цогц</span>
           <br />
           <span className="text-foreground">үйлчилгээг үзүүлнэ</span>
@@ -47,9 +45,9 @@ const HeroSection = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.8 }}
-          className="text-muted-foreground text-lg max-w-2xl mx-auto mb-10"
-        >
-          Шинэ цагийн технологийн дэвшлийг ашиглан найдвартай, хариуцлагатай үйлчилгээг хүргэнэ
+          className="text-muted-foreground text-lg max-w-2xl mx-auto mb-10">
+          Шинэ цагийн технологийн дэвшлийг ашиглан найдвартай, хариуцлагатай
+          үйлчилгээг хүргэнэ
         </motion.p>
 
         <motion.a
@@ -57,8 +55,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1 }}
-          className="inline-flex items-center gap-3 glass glow-border px-8 py-4 rounded-2xl text-foreground font-medium hover:bg-primary/10 transition-all duration-300"
-        >
+          className="inline-flex items-center gap-3 glass glow-border px-8 py-4 rounded-2xl text-foreground font-medium hover:bg-primary/10 transition-all duration-300">
           Дэлгэрэнгүй
           <ArrowDown size={16} className="text-primary animate-bounce" />
         </motion.a>
@@ -68,10 +65,11 @@ const HeroSection = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.3 }}
-          className="mt-12 flex items-center justify-center gap-2"
-        >
+          className="mt-12 flex items-center justify-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-glow-pulse" />
-          <span className="text-xs text-muted-foreground">Үйл ажиллагаа идэвхтэй</span>
+          <span className="text-xs text-muted-foreground">
+            Үйл ажиллагаа идэвхтэй
+          </span>
         </motion.div>
       </div>
     </section>
